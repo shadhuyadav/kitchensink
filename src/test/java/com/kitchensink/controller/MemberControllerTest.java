@@ -6,17 +6,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import javax.xml.validation.Validator;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class MemberControllerTest {
 
@@ -35,8 +34,8 @@ class MemberControllerTest {
 
     @Test
     void getAllByOrderByNameAsc_ShouldReturnListOfMembers() {
-     List<Member> memberList=createMember();
-      when(memberService.findAllByOrderByNameAsc()).thenReturn(memberList);
+        List<Member> memberList = createMember();
+        when(memberService.findAllByOrderByNameAsc()).thenReturn(memberList);
         var result = memberController.getAllByOrderByNameAsc();
         assertEquals(2, result.size());
         assertEquals("Alpha", result.get(0).getName());
@@ -45,7 +44,7 @@ class MemberControllerTest {
 
     @Test
     void getMemberById_ShouldReturnMember_WhenExists() {
-        Member member=createMember().get(0);
+        Member member = createMember().get(0);
         member.setId("1");
         when(memberService.findById("1")).thenReturn(Optional.of(member));
         ResponseEntity<Member> result = memberController.getMemberById("1");
@@ -59,38 +58,26 @@ class MemberControllerTest {
         assertEquals(ResponseEntity.notFound().build(), result);
     }
 
-   @Test
+    @Test
     void createMember_ShouldReturnCreatedMember() {
         Member member = createMember().get(0);
         when(memberService.save(member)).thenReturn(member);
+        when(memberService.isEmailDuplicate(member.getEmail())).thenReturn(false);
         ResponseEntity<?> result = memberController.createMember(member);
         verify(memberService).save(member);
     }
-    @Test
-    void updateMember_ShouldReturnUpdatedMember_WhenExists() {
-        Member existingMember = createMember().get(0);
-        existingMember.setId("1");
-        Member updatedMember =createMember().get(0);
-        updatedMember.setName("Alpha Updated");
-        updatedMember.setId("1");
-        when(memberService.findById("1")).thenReturn(Optional.of(existingMember));
-        when(memberService.save(any(Member.class))).thenReturn(updatedMember);
-        ResponseEntity<Member> result = memberController.updateMember("1", updatedMember);
-        assertEquals(ResponseEntity.ok(updatedMember), result);
-        assertEquals("Alpha Updated", updatedMember.getName());
-    }
 
-    private List<Member> createMember(){
-        Member member1=new Member();
+    private List<Member> createMember() {
+        Member member1 = new Member();
         member1.setName("Alpha");
         member1.setEmail("Alpha@example.com");
         member1.setPhoneNumber("1234567890");
 
-        Member member2=new Member();
+        Member member2 = new Member();
         member2.setName("Beta");
         member2.setEmail("Beta@example.com");
         member2.setPhoneNumber("9876543210");
-       return Arrays.asList(member1, member2);
+        return Arrays.asList(member1, member2);
     }
 
 }

@@ -22,17 +22,19 @@ public class MemberService {
     public Optional<Member> findById(String id) {
         return memberRepository.findById(id);
     }
+
     public Optional<Member> findByEmailId(String emailId) {
         return Optional.ofNullable(memberRepository.findByEmail(emailId));
     }
 
 
-
     public Member save(Member member) {
+
         return memberRepository.save(member);
     }
 
-    public void deleteById(String id) {
-        memberRepository.deleteById(id);
+
+    public boolean isEmailDuplicate(String email) {
+        return memberRepository.findByEmail(email) != null;
     }
 }
