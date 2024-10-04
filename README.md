@@ -1,4 +1,5 @@
 # kitchensink
 
-#Build the application : mvn clean install
-#Run the application : mvn spring-boot:run
+#Command to build the application : mvn clean install
+
+#Command to run the application : mvn spring-boot:run
